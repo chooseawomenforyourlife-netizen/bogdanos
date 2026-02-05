@@ -1,0 +1,134 @@
+(function () {
+
+    'use strict';
+
+    var payload = {};
+
+    function trackProductData(message)
+    {
+
+        payload = {
+            "feedgen":window.feedkey,
+            "id":"",
+            "title":"",
+            "description":"",
+            "link":"",
+            "image_link":"",
+            "condition":"",
+            "availability":"",
+            "category":{"main":{},"secondary":{}},
+            "brand":"",
+            "price":{"current_price":{},"original_price":{},"other_price":{}},
+            "adult":"",
+            "other_info":{}
+        };
+
+
+        if (message["advert"] && message["advert"]["id"] && message["advert"]["id"] !== "" && document.querySelector) 
+        {
+            
+            payload.id = message["advert"]["id"] ? message["advert"]["id"] : "";
+            payload.title = message["advert"]["title"] ? message["advert"]["title"] : "";
+            payload.link= message["advert"]["url"] ? message["advert"]["url"] : "";
+            payload.description=message["seoData"] && message["seoData"]["description"] ? message["seoData"]["description"] : "";
+            payload.image_link = message["advert"]["images"] && message["advert"]["images"]["photos"] && message["advert"]["images"]["photos"][0] && message["advert"]["images"]["photos"][0].url ? message["advert"]["images"]["photos"][0].url : "";
+            payload.price.current_price.value = message["advert"]["price"] && message["advert"]["price"]["value"] ? message["advert"]["price"]["value"] : "";
+            payload.price.current_price.currency = message["advert"]["price"] && message["advert"]["price"]["currency"] ? message["advert"]["price"]["currency"] : "";
+            payload.category.main.name = message["advert"]["category"] && message["advert"]["category"]["name"] ? message["advert"]["category"]["name"] : "";
+            payload.category.main.id = message["advert"]["category"] && message["advert"]["category"]["id"] ? message["advert"]["category"]["id"] : "";
+            payload.category.secondary.name = "";
+            payload.category.secondary.id = "";
+            payload.condition = message["advert"]["isUsedCar"] && message["advert"]["isUsedCar"] === true ? "used" : "new";
+            payload.brand = message["advert"]["details"].find(item => item.key === "make")?.value;
+            payload.other_info.fuel = message["advert"]["details"].find(item => item.key === "fuel_type")?.value?.toLowerCase();
+
+            if (message["advert"]["details"]) {
+                for (const item of message["advert"]["details"]) {
+                    const detailKey = item.key;
+                    const romanianValue = item.value;
+                    
+                    // Find the corresponding parameter in parametersDict
+                    const parameter = message["advert"]["parametersDict"][detailKey];
+                    
+                    if (parameter && parameter.values && detailKey !== "model" && detailKey !== "make") {
+                        // Find the translation for the Romanian value
+                        const translation = parameter.values.find(val => val.label === romanianValue);
+                        
+                        if (translation) {
+                            payload.other_info[detailKey] = translation.value;
+                        } else {
+                            // Fallback to original value if no translation found
+                            payload.other_info[detailKey] = romanianValue;
+                        }
+                    } else {
+                        // Fallback if parameter doesn't exist
+                        payload.other_info[detailKey] = romanianValue;
+                    }
+                }
+            }
+
+        
+            
+            
+            payload.other_info.seller = message["advert"]["seller"] && message["advert"]["seller"]["id"] ? message["advert"]["seller"]["id"] : "";
+            payload.other_info.poster_type = message["advert"]["seller"] && message["advert"]["seller"]["type"] ? message["advert"]["seller"]["type"].toLowerCase() : "";
+            
+            payload.other_info.ad_featured = message["advert"]["adFeatures"] ? message["advert"]["adFeatures"].join(",") : "";
+            payload.other_info.ad_packages = message["advert"]["packages"] ? message["advert"]["packages"].join(",") : "";
+
+            if (message["advert"]["seller"] && message["advert"]["seller"]["location"])
+            {
+                payload.other_info.district = message["advert"]["seller"]["location"]["region"] ? message["advert"]["seller"]["location"]["region"] : "";
+                payload.other_info.city = message["advert"]["seller"]["location"]["city"] ? message["advert"]["seller"]["location"]["city"] : "";
+                payload.other_info.address = message["advert"]["seller"]["location"]["address"] ? message["advert"]["seller"]["location"]["address"] : "";
+                payload.other_info.latitude = message["advert"]["seller"]["location"]["map"] && message["advert"]["seller"]["location"]["map"]["latitude"] ? message["advert"]["seller"]["location"]["map"]["latitude"] : "";
+                payload.other_info.longitude = message["advert"]["seller"]["location"]["map"] && message["advert"]["seller"]["location"]["map"]["longitude"] ? message["advert"]["seller"]["location"]["map"]["longitude"] : "";
+                
+            }
+            
+            payload.other_info.brand_program = message["advert"]["seller"] && message["advert"]["seller"]["logos"] ? message["advert"]["seller"]["logos"].find(logo => logo.type === "brandProgram")?.image?.alt : "";
+            
+
+            if (navigator && typeof navigator.sendBeacon === 'function') {
+                try {
+                    var blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+                    navigator.sendBeacon('https://feedgen-io.ew.r.appspot.com/product', blob);
+                } catch (err) {
+                    console.error("Error sending beacon:", err);
+                }
+            }
+        
+        }
+
+    }
+
+    setTimeout(() => {
+        if (window && window.next && window.next.router) {
+            
+            // Function to check and track product data
+            const checkAndTrack = () => {
+                if (window.next.router && window.next.router.components && document.documentElement.lang == 'pl') {
+                    const matchingKey = Object.keys(window.next.router.components).find(key => 
+                        key.endsWith('[ad_id]')
+                    );
+                    
+                    if (matchingKey && 
+                        window.next.router.components[matchingKey].props && 
+                        window.next.router.components[matchingKey].props.pageProps) {
+                        trackProductData(window.next.router.components[matchingKey].props.pageProps);
+                    }
+                }
+            };
+            
+            // Check immediately
+            checkAndTrack();
+            
+            // Remove any existing listener (if you're concerned about duplicates)
+            window.next.router.events.off('routeChangeComplete', checkAndTrack);
+            
+            // Add the event listener
+            window.next.router.events.on('routeChangeComplete', checkAndTrack);
+        }
+    }, 500);
+
+})();
